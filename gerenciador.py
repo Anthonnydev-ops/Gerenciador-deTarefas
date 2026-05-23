@@ -1,0 +1,66 @@
+def adicionar_tarefa(tarefas, nome_tarefas):
+
+    #tarefa:nome da tarefa
+    #completada: indicar se a tarefa foi completada ou nao
+    tarefa = {'tarefa': nome_tarefa, 'completada': False}
+    tarefas.append(tarefa)
+    print(f'Tarefa: {nome_tarefa} foi adicionada com sucesso!')
+    return
+
+def ver_tarefas(tarefas):
+    print('\nLista de tarefas: ')
+    for indice, tarefa in enumerate(tarefas, start=1): #esse for faz com que a tarefa apareça realmente como uma lista e seja enumerado a partir do numero 1. Isso acontece pq dentro do for tem o indice(mostra o local na lista) e dentro do enumerate temos o start=1 que faz com q a lista comece no indice 1
+        status = '✓ ' if tarefa['completada'] else ''
+        nome_tarefa = tarefa['tarefa']
+        print(f'{indice}. [{status}] {nome_tarefa}')
+    return 
+
+def atualizar_nome_tarefa(tarefas, indice_tarefa, novo_nome_tarefa):
+    indice_tarefa_ajustado = int(indice_tarefa) - 1 
+    if indice_tarefa_ajustado >= 0 and indice_tarefa_ajustado < len(tarefas):
+        tarefas[indice_tarefa_ajustado]['tarefa'] = novo_nome_tarefa #isso aqui ja permite fazer a mudanca do nome da tarefa
+        print(f'Tarefa {indice_tarefa} atualizada para {novo_nome_tarefa}!')
+    else:
+        print('Indice de tarefa invalido.')
+    return 
+
+def completar_tarefa(tarefas, indice_tarefa):
+    indice_tarefa_ajustado = int(indice_tarefa) - 1 
+    tarefas[indice_tarefa_ajustado] ['completada'] = True
+    print(f'Tarefa {indice_tarefa} marcada como completada')
+    return
+
+tarefas = []
+while True:
+    print('\nMenu do Gerenciador de Lista de Tarefas:')
+    print('1. Adicionar Tarefas')
+    print('2. Ver Tarefas')
+    print('3. Atualizar Tarefas')
+    print('4. Completar Tarefas')
+    print('5. Deletar Tarefas')
+    print('6. Sair')
+
+    escolha = input('Digite uma escolha: ')
+
+    if escolha == '1':
+        nome_tarefa = input('Digite o nome da tarefa que deseja adicionar: ')
+        adicionar_tarefa(tarefas, nome_tarefa)
+    
+    elif escolha == '2':
+         ver_tarefas(tarefas)
+    
+    elif escolha == '3':
+        ver_tarefas(tarefas)
+        indice_tarefa = input('Digite o numero da tarefa que deseja atualizar: ')
+        novo_nome = input('Digite o novo nome da tarefa: ')
+        atualizar_nome_tarefa(tarefas, indice_tarefa, novo_nome)
+    
+    elif escolha == '4':
+        ver_tarefas(tarefas)
+        indice_tarefa = input('Digite o numero da tarefa que deseja completar: ')
+        completar_tarefa(tarefas, indice_tarefa)
+
+    elif escolha == '6':  #nesse momento ele vai verificar se o usuario nao selecionou o 1 caso ele n tenha selecionado o 1 ele vai verificar o 6
+        break 
+    
+print('Programe Finalizado')
