@@ -51,7 +51,7 @@ Este projeto foi desenvolvido para reforçar conhecimentos básicos de programa�
 ### 1. Clone o repositório
 
 ```bash
-git clone https://github.com/seu-usuario/gerenciador-de-tarefas.git
+https://github.com/Anthonnydev-ops/Gerenciador-de-Tarefas.git
 ```
 
 ### 2. Acesse a pasta do projeto
@@ -63,7 +63,7 @@ cd gerenciador-de-tarefas
 ### 3. Execute o programa
 
 ```bash
-python main.py
+python gerenciador.py
 ```
 
 ---
@@ -104,5 +104,3 @@ Este projeto foi criado com fins educacionais para praticar lógica de programa�
 ## 👨‍💻 Autor
 
 **Anthonny José Dantas de Almeida**
-
-Projeto desenvolvido durante os estudos de Python e lógica de programação.
