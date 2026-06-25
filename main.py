@@ -1,3 +1,5 @@
+import sqlite3
+
 def adicionar_tarefa(tarefas, nome_tarefas):
 
     #tarefa:nome da tarefa
