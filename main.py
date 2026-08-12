@@ -1,79 +1,160 @@
 import sqlite3
 
-def adicionar_tarefa(tarefas, nome_tarefas):
+# ==========================
+# BANCO DE DADOS
+# ==========================
 
-    #tarefa:nome da tarefa
-    #completada: indicar se a tarefa foi completada ou nao
-    tarefa = {'tarefa': nome_tarefa, 'completada': False}
-    tarefas.append(tarefa)
-    print(f'Tarefa: {nome_tarefa} foi adicionada com sucesso!')
-    return
+conexao = sqlite3.connect("tarefas.db")
+cursor = conexao.cursor()
 
-def ver_tarefas(tarefas):
-    print('\nLista de tarefas: ')
-    for indice, tarefa in enumerate(tarefas, start=1): #esse for faz com que a tarefa apareça realmente como uma lista e seja enumerado a partir do numero 1. Isso acontece pq dentro do for tem o indice(mostra o local na lista) e dentro do enumerate temos o start=1 que faz com q a lista comece no indice 1
-        status = '✓ ' if tarefa['completada'] else ''
-        nome_tarefa = tarefa['tarefa']
-        print(f'{indice}. [{status}] {nome_tarefa}')
-    return 
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS tarefas (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    tarefa TEXT NOT NULL,
+    completada INTEGER DEFAULT 0
+)
+""")
 
-def atualizar_nome_tarefa(tarefas, indice_tarefa, novo_nome_tarefa):
-    indice_tarefa_ajustado = int(indice_tarefa) - 1 
-    if indice_tarefa_ajustado >= 0 and indice_tarefa_ajustado < len(tarefas):
-        tarefas[indice_tarefa_ajustado]['tarefa'] = novo_nome_tarefa #isso aqui ja permite fazer a mudanca do nome da tarefa
-        print(f'Tarefa {indice_tarefa} atualizada para {novo_nome_tarefa}!')
-    else:
-        print('Indice de tarefa invalido.')
-    return 
+conexao.commit()
 
-def completar_tarefa(tarefas, indice_tarefa):
-    indice_tarefa_ajustado = int(indice_tarefa) - 1 
-    tarefas[indice_tarefa_ajustado] ['completada'] = True
-    print(f'Tarefa {indice_tarefa} marcada como completada')
-    return
+# ==========================
+# FUNÇÕES
+# ==========================
 
-def deletar_tarefas_completadas(tarefas):
-    for tarefa in tarefas:
-        if tarefa['completada']: 
-            tarefas.remove(tarefa)
-    print('Tarefas completadas foram deletadas!')
-    return
+def adicionar_tarefa(nome_tarefa):
+    cursor.execute(
+        "INSERT INTO tarefas (tarefa, completada) VALUES (?, ?)",
+        (nome_tarefa, 0)
+    )
 
-tarefas = []
+    conexao.commit()
+
+    print(f"Tarefa '{nome_tarefa}' adicionada com sucesso!")
+
+
+def ver_tarefas():
+    cursor.execute(
+        "SELECT id, tarefa, completada FROM tarefas ORDER BY id"
+    )
+
+    tarefas = cursor.fetchall()
+
+    print("\nLista de tarefas:")
+
+    if not tarefas:
+        print("Nenhuma tarefa cadastrada.")
+        return
+
+    for indice, tarefa in enumerate(tarefas, start=1):
+        id_tarefa, nome, completada = tarefa
+
+        status = "✓" if completada else " "
+
+        print(f"{indice}. [{status}] {nome}")
+
+
+def obter_id_real(posicao):
+    cursor.execute(
+        "SELECT id FROM tarefas ORDER BY id"
+    )
+
+    ids = cursor.fetchall()
+
+    if 1 <= posicao <= len(ids):
+        return ids[posicao - 1][0]
+
+    return None
+
+
+def atualizar_nome_tarefa(id_tarefa, novo_nome):
+    cursor.execute(
+        "UPDATE tarefas SET tarefa = ? WHERE id = ?",
+        (novo_nome, id_tarefa)
+    )
+
+    conexao.commit()
+
+    print("Tarefa atualizada com sucesso!")
+
+
+def completar_tarefa(id_tarefa):
+    cursor.execute(
+        "UPDATE tarefas SET completada = 1 WHERE id = ?",
+        (id_tarefa,)
+    )
+
+    conexao.commit()
+
+    print("Tarefa marcada como concluída!")
+
+
+def deletar_tarefas_completadas():
+    cursor.execute(
+        "DELETE FROM tarefas WHERE completada = 1"
+    )
+
+    conexao.commit()
+
+    print("Tarefas concluídas removidas!")
+
+
+# ==========================
+# MENU
+# ==========================
+
 while True:
-    print('\nMenu do Gerenciador de Lista de Tarefas:')
-    print('1. Adicionar Tarefas')
-    print('2. Ver Tarefas')
-    print('3. Atualizar Tarefas')
-    print('4. Completar Tarefas')
-    print('5. Deletar Tarefas')
-    print('6. Sair')
 
-    escolha = input('Digite uma escolha: ')
+    print("\n=== GERENCIADOR DE TAREFAS ===")
+    print("1. Adicionar tarefa")
+    print("2. Ver tarefas")
+    print("3. Atualizar tarefa")
+    print("4. Completar tarefa")
+    print("5. Deletar tarefas concluídas")
+    print("6. Sair")
 
-    if escolha == '1':
-        nome_tarefa = input('Digite o nome da tarefa que deseja adicionar: ')
-        adicionar_tarefa(tarefas, nome_tarefa)
-    
-    elif escolha == '2':
-         ver_tarefas(tarefas)
-    
-    elif escolha == '3':
-        ver_tarefas(tarefas)
-        indice_tarefa = input('Digite o numero da tarefa que deseja atualizar: ')
-        novo_nome = input('Digite o novo nome da tarefa: ')
-        atualizar_nome_tarefa(tarefas, indice_tarefa, novo_nome)
-    
-    elif escolha == '4':
-        ver_tarefas(tarefas)
-        indice_tarefa = input('Digite o numero da tarefa que deseja completar: ')
-        completar_tarefa(tarefas, indice_tarefa)
+    escolha = input("Digite uma opção: ")
 
-    elif escolha == '5': 
-        deletar_tarefas_completadas(tarefas)
-        ver_tarefas(tarefas)
+    if escolha == "1":
+        nome = input("Digite o nome da tarefa: ")
+        adicionar_tarefa(nome)
 
-    elif escolha == '6':  #nesse momento ele vai verificar se o usuario nao selecionou o 1 caso ele n tenha selecionado o 1 ele vai verificar o 6
-        break 
-    
-print('Programe Finalizado')
+    elif escolha == "2":
+        ver_tarefas()
+
+    elif escolha == "3":
+        ver_tarefas()
+
+        posicao = int(input("Digite o número da tarefa: "))
+        novo_nome = input("Digite o novo nome da tarefa: ")
+
+        id_real = obter_id_real(posicao)
+
+        if id_real:
+            atualizar_nome_tarefa(id_real, novo_nome)
+        else:
+            print("Tarefa inválida!")
+
+    elif escolha == "4":
+        ver_tarefas()
+
+        posicao = int(input("Digite o número da tarefa que deseja concluir: "))
+
+        id_real = obter_id_real(posicao)
+
+        if id_real:
+            completar_tarefa(id_real)
+        else:
+            print("Tarefa inválida!")
+
+    elif escolha == "5":
+        deletar_tarefas_completadas()
+        ver_tarefas()
+
+    elif escolha == "6":
+        print("Programa finalizado!")
+        break
+
+    else:
+        print("Opção inválida!")
+
+conexao.close()
