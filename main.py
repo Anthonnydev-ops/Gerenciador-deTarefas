@@ -1,9 +1,7 @@
 import sqlite3
 
-# ==========================
-# BANCO DE DADOS
-# ==========================
 
+# BANCO DE DADOS
 conexao = sqlite3.connect("tarefas.db")
 cursor = conexao.cursor()
 
@@ -17,10 +15,8 @@ CREATE TABLE IF NOT EXISTS tarefas (
 
 conexao.commit()
 
-# ==========================
-# FUNÇÕES
-# ==========================
 
+# FUNÇÕES
 def adicionar_tarefa(nome_tarefa):
     cursor.execute(
         "INSERT INTO tarefas (tarefa, completada) VALUES (?, ?)",
@@ -98,10 +94,8 @@ def deletar_tarefas_completadas():
     print("Tarefas concluídas removidas!")
 
 
-# ==========================
-# MENU
-# ==========================
 
+# MENU
 while True:
 
     print("\n=== GERENCIADOR DE TAREFAS ===")
